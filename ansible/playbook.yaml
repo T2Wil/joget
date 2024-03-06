@@ -1,0 +1,91 @@
+- name: Set up Joget Servers
+  hosts: jogetservers
+  vars_files:
+    - ./vars/envs.yaml
+  vars:
+    ansible_ssh_private_key_file: "/Users/ishimwewilliam/.ssh/id_rsa"
+  tasks:
+    - name: Update apt package cache
+      apt:
+        update_cache: yes
+      tags:
+        - start-joget
+
+    - name: Install dependencies
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg-agent
+          - software-properties-common
+      tags:
+        - start-joget
+
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+      tags:
+        - start-joget
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+      tags:
+        - start-joget
+
+    - name: Install Docker
+      apt:
+        name: docker-ce
+        state: latest
+      tags:
+        - start-joget
+
+    - name: Install Docker Compose
+      get_url:
+        url: https://github.com/docker/compose/releases/latest/download/docker-compose-Linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x'
+      tags:
+        - start-joget
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+      tags:
+        - start-joget
+
+    - name: Template a file to ./docker-compose.yaml
+      ansible.builtin.template:
+        src: ./templates/docker-compose.j2
+        dest: ./docker-compose.yaml
+      tags:
+        - start-joget
+
+    - name: Install Joget Stack
+      command: "docker-compose up -d --scale joget=3"
+      register: output
+      tags:
+        - start-joget
+
+    - name: Show results
+      ansible.builtin.debug:
+        var: output
+      tags:
+        - start-joget
+
+    - name: Restart Joget Stack
+      command: "docker-compose restart"
+      register: output
+      tags:
+        - restart-joget
+
+    - name: Show results
+      ansible.builtin.debug:
+        var: output
+      tags:
+        - restart-joget
