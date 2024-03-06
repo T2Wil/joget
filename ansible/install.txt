@@ -1,0 +1,2 @@
+# To install community.docker.docker_compose module
+sudo ansible-playbook -i hosts  playbook.yaml --tags start-joget
