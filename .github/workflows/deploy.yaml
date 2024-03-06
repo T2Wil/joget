@@ -22,5 +22,5 @@ jobs:
         key: ${{secrets.SSH_PRIVATE_KEY}}
         # additional flags to pass to ansible-playbook
         options: |
-          --inventory .hosts
+          --inventory hosts
           --tags start-dev
