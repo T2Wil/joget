@@ -1,0 +1,25 @@
+name: Deploy to dev
+on:
+  push:
+    branches:
+    - develop
+    - main
+jobs:
+  deploy:
+    name: Deploy with ansible
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: '0'
+    - name: Run playbook
+      uses: dawidd6/action-ansible-playbook@v2
+      with:
+        # Required, playbook filepath
+        playbook: playbook.yaml
+        # directory where playbooks live
+        directory: ./ansible
+        key: ${{secrets.SSH_PRIVATE_KEY}}
+        # additional flags to pass to ansible-playbook
+        options: |
+          --inventory .hosts
