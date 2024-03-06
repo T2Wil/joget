@@ -1,0 +1,3 @@
+[jogetservers]
+devServer  ansible_host=64.227.73.87 ansible_port=22 ansible_connection=ssh ansible_user=root
+# prodServer ansible_host=192.0.2.50 ansible_port=22 ansible_connection=ssh ansible_user=root
