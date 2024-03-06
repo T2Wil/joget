@@ -1,0 +1,32 @@
+# Ignore version control system files
+.git
+.gitignore
+
+# Ignore Docker Compose files for specific environments
+docker-compose.override.yml
+docker-compose.*.yml
+
+# Ignore local configuration files
+.env
+
+# Ignore build and temporary files
+node_modules
+build
+*.log
+*.swp
+
+# Ignore editor-specific files
+.vscode
+.idea
+
+# Ignore test files and directories
+tests
+test
+*.spec.js
+
+# Ignore documentation files
+docs
+
+# Ignore unnecessary files in the root directory
+README.md
+LICENSE
