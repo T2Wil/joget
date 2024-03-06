@@ -30,4 +30,4 @@ jobs:
         # additional flags to pass to ansible-playbook
         options: |
           --inventory hosts
-          --tags start-${{TARGET_ENV}}
+          --tags start-${{env.TARGET_ENV}}
