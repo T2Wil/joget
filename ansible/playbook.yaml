@@ -67,7 +67,8 @@
         - start-joget
 
     - name: Install Joget Stack
-      command: "docker-compose up -d --scale joget=3"
+     # If the containers are already running, this option will restart the services if there are changes in the docker-compose.yml file.
+      command: "docker-compose up -d --no-recreate --scale joget=3"
       register: output
       tags:
         - start-joget
