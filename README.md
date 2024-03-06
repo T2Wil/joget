@@ -13,3 +13,7 @@
 - Set `resource constraints` on your Docker containers to prevent resource contention and ensure that the application operates within defined resource boundaries. This is crucial for efficient scalability.
 - Utilize `Docker volumes for persistent data storage`. Mounting volumes allows you to separate data from the container, making it easier to scale instances without worrying about data loss.
 - Health checks are implemented on LB to only forward traffic to live instances.
+
+
+## Application features
+- Demo
