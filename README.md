@@ -15,5 +15,7 @@
 - Health checks are implemented on LB to only forward traffic to live instances.
 
 
-## Application features
-- Demo
+## Next
+- HA Demo
+- CI/CD Demo
+- Account Creation App Demo
