@@ -1,0 +1,6 @@
+# Start docker compose
+docker-compose up -d
+
+
+# Spinning up 3 deployments
+docker-compose up -d --scale joget=3
