@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  haproxy:
+    image: haproxy:2.9-alpine
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      - joget-backend
+    ports:
+      - "8090:80"
+    depends_on:
+      - joget
+
+  joget:
+    # Omit container name if spinning up multiple instances
+    # container_name: jogetapp
+    image: jogetworkflow/joget-community:{{ JOGET_COMMUNITY_VERSION }}
+    restart: on-failure:3  # Restart the container on failure, with a maximum of 3 attempts
+    environment:
+      - MYSQL_HOST={{ MYSQL_HOST }}
+      - MYSQL_DATABASE={{ MYSQL_DATABASE }}
+      - MYSQL_PORT={{ MYSQL_PORT }}
+      - MYSQL_USER={{ MYSQL_USER }}
+      - MYSQL_PASSWORD={{ MYSQL_PASSWORD }}
+    # Or import all env vars from external configuration
+    # env_file:
+    #   - ./joget.env  # External configuration file
+
+    volumes:
+      - jogetdata:/opt/joget/wflow
+    networks:
+      - joget-backend
+    ports:
+      # - "8081:8080"
+      # change the port configuration to dynamically allocate a host port for each replica when using hpa
+      - "8080"
+    depends_on:
+      jogetdb:
+        condition: service_healthy    
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '3'
+    #       memory: 3G
+    #     reservations:
+    #       cpus: '0.1'
+    #       memory: 20M
+
+  jogetdb:
+    container_name: jogetdb
+    image: mysql:{{ JOGET_MYSQL_VERSION }}
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD={{ MYSQL_ROOT_PASSWORD }}
+      - MYSQL_DATABASE={{ MYSQL_DATABASE }}
+      - MYSQL_USER={{ MYSQL_USER }}
+      - MYSQL_PASSWORD={{ MYSQL_PASSWORD }}
+    
+    # Or import all env vars from external configuration
+    # env_file:
+    #   - ./jogetdb.env  # External configuration file
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      - joget-backend
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  jogetdata:
+  mysqldata:
+
+networks:
+  joget-backend:
